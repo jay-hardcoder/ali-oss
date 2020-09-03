@@ -8,7 +8,7 @@ const $ = require('jquery');
 const OSS = require('ali-oss');
 const crypto = require('crypto');
 
-const appServer = 'http://localhost:9000/sts';
+const appServer = '/api/fileApi/oss/policy?bizCode=SHARE_RESOURCE:FILE&client=WEB';
 const bucket = '<bucket-name>';
 const region = 'oss-cn-hangzhou';
 const { Buffer } = OSS;
@@ -35,14 +35,19 @@ const applyTokenDo = function (func, refreshSts) {
     return $.ajax({
       url
     }).then((result) => {
+        console.log(result);
+        result = result.data;
       const creds = result;
-      const client = new OSS({
+      const options = {
         region,
-        accessKeyId: creds.AccessKeyId,
-        accessKeySecret: creds.AccessKeySecret,
-        stsToken: creds.SecurityToken,
-        bucket
-      });
+        endpoint:creds.endpoint,
+        accessKeyId: creds.accessId,
+        accessKeySecret: creds.accessSecret,
+        stsToken: creds.token,
+        bucket: creds.bucket
+      };
+      console.log(options);
+      const client = new OSS(options);
 
       console.log(OSS.version);
       return func(client);
@@ -52,6 +57,7 @@ const applyTokenDo = function (func, refreshSts) {
 };
 let currentCheckpoint;
 const progress = async function progress(p, checkpoint) {
+    console.log(checkpoint);
   currentCheckpoint = checkpoint;
   const bar = document.getElementById('progress-bar');
   bar.style.width = `${Math.floor(p * 100)}%`;

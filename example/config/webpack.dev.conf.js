@@ -46,12 +46,13 @@ module.exports = {
   ],
   devServer: {
     contentBase: path.resolve(__dirname, '../dist'),
-    port: 3000,
+    port: 80,
     host: '0.0.0.0',
-    open: true, // open browser auto
+    disableHostCheck: true,
+    open: false, // open browser auto
     index: 'index.html', // like HtmlWebpackPlugin
     inline: true, // default:true
-    hot: false,
-    compress: true // compress
+    hot: true,
+    compress: false // compress
   }
 };
